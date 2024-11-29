@@ -33,13 +33,13 @@ export default function Home() {
            <Game
           title={"Comming Soon"}
           desc={"yeah its comming soon stay tuned!"}
-          image={""}
+          image={"/kendrick.jpg"}
           link={"/"}
            />
            <Game
           title={"Comming Soon..."}
           desc={"yeah its comming soon stay tuned"}
-          image={""}
+          image={"/kendrick.jpg"}
           link={"/"}
            />
           </div>

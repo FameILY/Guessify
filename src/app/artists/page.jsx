@@ -2,6 +2,8 @@
 import Artist from "@/components/Artist";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import ArtistResult from "@/components/ArtistResult";
+import ArtistR from "@/components/ArtistR";
 
 export default function Artist1() {
   const [originalArtists, setOriginalArtists] = new useState({});
@@ -10,6 +12,10 @@ export default function Artist1() {
 
   const [clickOrder, setClickOrder] = useState({});
   const [orderCounter, setOrderCounter] = useState(1);
+  const [showResult, setShowResult] = useState(false);
+
+  const [correct, setCorrect] = useState(0);
+  const [incorrect, setIncorrect] = useState(0);
 
   useEffect(() => {
     // Fetch artists only once when the component mounts
@@ -27,7 +33,7 @@ export default function Artist1() {
 
         // Set the original list
         setOriginalArtists(obj);
-        console.log("original artist", originalArtists);
+        // console.log("original artist", obj);
 
         // Shuffle the object
         const keys = Object.keys(obj);
@@ -51,7 +57,7 @@ export default function Artist1() {
     }
 
     fetchArtists(); // Call fetchArtists once on mount
-  }, []); // Empty dependency array ensures this runs only once
+  }, [setOriginalArtists, setShuffledArtists]); // Empty dependency array ensures this runs only once
 
   if (loading) {
     return (
@@ -63,16 +69,63 @@ export default function Artist1() {
 
   function handleClick(id) {
     if (!clickOrder[id]) {
-      setClickOrder((prev) => ({ ...prev, [id]: orderCounter }));
+      setClickOrder((prev) => {
+        const updatedOrder = { ...prev, [id]: orderCounter };
+        return updatedOrder;
+      });
       setOrderCounter((prev) => prev + 1);
-      console.log(clickOrder);
-      console.log(orderCounter);
     }
+    console.log("clickOrder:", clickOrder);
+    console.log("orderCounter:", orderCounter);
   }
+
+  function logic(ogArray, shuffArray, userArray) {
+    let correct = 0,
+      incorrect = 0;
+  
+    for (let artistKey in userArray) {
+      const order = userArray[artistKey]; // The order in which this artist was clicked
+      const shuffledArtist = shuffArray[artistKey]; // Artist details from shuffled list
+      const originalArtist = ogArray[order]; // Correct artist at this order
+  
+      if (shuffledArtist?.name === originalArtist?.name) {
+        console.log(
+          `${artistKey} CORRECT: You chose ${shuffledArtist.name}, correct answer is ${originalArtist.name}`
+        );
+        shuffledArtist.isCorrect = true; // Update the shuffled artist with the correctness
+        correct++;
+      } else {
+        console.log(
+          `${artistKey} WRONG: You chose ${shuffledArtist?.name}, correct answer is ${originalArtist?.name}`
+        );
+        shuffledArtist.isCorrect = false; // Mark as incorrect
+        incorrect++;
+      }
+    }
+  
+    console.log("Results: Correct =", correct, "Incorrect =", incorrect);
+    return { correct, incorrect };
+  }
+  
+  const result = () => {
+    console.log("Og: ", originalArtists);
+    console.log("Shuff: ", shuffledArtists);
+    console.log("User's Choice: ", clickOrder);
+    // console.log("Called");
+
+    const { correct, incorrect } = logic(
+      originalArtists,
+      shuffledArtists,
+      clickOrder
+    );
+    console.log("HERE IT IS LOGGED RETURNED", correct, incorrect);
+    setCorrect(correct);
+    setIncorrect(incorrect);
+    setShowResult(true);
+  };
 
   return (
     <>
-      {console.log(shuffledArtists)}
       <div className="md:px-24 flex flex-col justify-center items-center h-full">
         <p className=" font-bold mb-8 mt-2 text-3xl sm:text-5xl antialiased  bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent md:p-2 p-4">
           Guess Your Top 5
@@ -80,7 +133,7 @@ export default function Artist1() {
 
         <div className="flex flex-row flex-wrap md:flex-row md:flex-nowrap">
           {Object.entries(shuffledArtists).length === 0 ? (
-            <p>No artists to display</p>
+            <p>Nothing to display 😿 check your session</p>
           ) : (
             Object.entries(shuffledArtists).map(([key, artist]) => (
               <Artist
@@ -93,7 +146,40 @@ export default function Artist1() {
             ))
           )}
         </div>
-        {orderCounter == 6 ? <Button className="">Check</Button> : <></>}
+        {orderCounter == 6 ? (
+          <Button onClick={result} className="">
+            Check
+          </Button>
+        ) : (
+          <></>
+        )}
+
+        {showResult ? (
+          <div>
+            <ArtistResult
+              correct={correct}
+              incorrect={incorrect}
+              original={originalArtists}
+            />
+
+            <div className="flex flex-row flex-wrap md:flex-row md:flex-nowrap">
+              {Object.entries(shuffledArtists).length === 0 ? (
+                <p>Nothing to display 😿 check your session</p>
+              ) : (
+                Object.entries(shuffledArtists).map(([key, artist]) => (
+                  <ArtistR
+                    key={`shuffled-${key}`}
+                    image={artist.image}
+                    name={artist.name}
+                    isCorrect={artist.isCorrect}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
     </>
   );

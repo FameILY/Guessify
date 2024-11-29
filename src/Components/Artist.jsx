@@ -22,7 +22,7 @@ export default function Artist({ image, name, clickOrder, onClick }) {
     <>
       <Card
         className="relative max-w-96 dark:hover:border-green-300 hover:border-green-600 hover:scale-110 transition-all duration-150 m-6"
-        onClick={onClick}
+        
       >
         {clickOrder && (
           <div
@@ -33,7 +33,7 @@ export default function Artist({ image, name, clickOrder, onClick }) {
           </div>
         )}
 
-        <CardHeader>
+        <CardHeader onClick={onClick}>
           <Image src={image} alt={"game Image"} width={500} height={500} />
         </CardHeader>
 
