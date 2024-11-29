@@ -1,5 +1,5 @@
 "use client";
-import Artist from "@/components/Artist";
+import Artist from "@/components/Artist.jsx";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import ArtistResult from "@/components/ArtistResult";
