@@ -1,8 +1,8 @@
 
 import { Inter } from "next/font/google";
 import "./globals.css";
-import SessionProviderWrapper from "@/Components/sessionProviderWrapper";
-import { ThemeProvider } from "@/Components/theme-provider"
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
+import { ThemeProvider } from "@/components/theme-provider"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,16 +16,16 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <SessionProviderWrapper>
         <body className={`flex flex-col min-h-screen ${inter.className}`}>
+          <main className="p-4 ">
         <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
-          <main className="p-4">
             {children}
-          </main>
           </ThemeProvider>
+          </main>
         </body>
       </SessionProviderWrapper>
     </html>

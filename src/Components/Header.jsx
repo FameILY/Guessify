@@ -1,10 +1,10 @@
 "use client";
 import Image from "next/image";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { Button } from "@/Components/ui/button.jsx"
+import { Button } from "@/components/ui/button.jsx"
 import { BsSpotify } from "react-icons/bs";
-import CustomAvatar from "@/Components/CustomAvatar";
-import { ModeToggle } from "@/Components/toggle";
+import CustomAvatar from "@/components/CustomAvatar";
+import { ModeToggle } from "@/components/toggle";
 
 export default function Header() {
   const { data: session } = useSession();

@@ -1,7 +1,7 @@
 "use client"
 import { BsSpotify } from "react-icons/bs";
 import { signIn, signOut, useSession } from "next-auth/react";
-import Header from "@/Components/Header";
+import Header from "@/components/Header";
 
 export default function Landing() {
   const { data: session } = useSession();
