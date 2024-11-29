@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button.jsx"
 import { BsSpotify } from "react-icons/bs";
 import CustomAvatar from "@/components/CustomAvatar";
 import { ModeToggle } from "@/components/toggle";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const { data: session } = useSession();
+  const router = useRouter();
 
   // async function logout() {
   //   try {
@@ -32,8 +34,9 @@ export default function Header() {
 
   return (
     <>
-      <nav className="bg-transparent px-32 sticky top-0 z-50 flex items-center justify-between p-2">
+      <nav className="bg-zinc-950 bg-opacity-70 backdrop-blur md:px-32 sticky top-0 z-50 flex items-center gap-2 justify-between p-2">
         <p className="text-lg font-semibold">Guessify</p>
+        <p onClick={ ()=> { router.back()}}>Back</p>
 
         <div className="flex flex-row items-center">
           <p className="text-base me-4">

@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import ArtistResult from "@/components/ArtistResult";
 import ArtistR from "@/components/ArtistR";
+import Header from "@/components/Header";
+import GuessArtists from "@/components/GuessArtists";
 
 export default function Artist1() {
   const [originalArtists, setOriginalArtists] = new useState({});
@@ -17,17 +19,22 @@ export default function Artist1() {
   const [correct, setCorrect] = useState(0);
   const [incorrect, setIncorrect] = useState(0);
 
+  const [clickPlay, setClickPlay] = useState(false);
+
   useEffect(() => {
     // Fetch artists only once when the component mounts
     async function fetchArtists() {
       try {
         const result = await fetch("/api/artist");
         const data = await result.json();
+        console.log(data);
         const obj = {};
         data.items.forEach((item, index) => {
           obj[index + 1] = {
             name: item.name,
             image: item.images[0]?.url,
+            // url: item.external_urls[0].spotify,
+            // genres: item.genres
           };
         });
 
@@ -82,12 +89,12 @@ export default function Artist1() {
   function logic(ogArray, shuffArray, userArray) {
     let correct = 0,
       incorrect = 0;
-  
+
     for (let artistKey in userArray) {
       const order = userArray[artistKey]; // The order in which this artist was clicked
       const shuffledArtist = shuffArray[artistKey]; // Artist details from shuffled list
       const originalArtist = ogArray[order]; // Correct artist at this order
-  
+
       if (shuffledArtist?.name === originalArtist?.name) {
         console.log(
           `${artistKey} CORRECT: You chose ${shuffledArtist.name}, correct answer is ${originalArtist.name}`
@@ -102,11 +109,11 @@ export default function Artist1() {
         incorrect++;
       }
     }
-  
+
     console.log("Results: Correct =", correct, "Incorrect =", incorrect);
     return { correct, incorrect };
   }
-  
+
   const result = () => {
     console.log("Og: ", originalArtists);
     console.log("Shuff: ", shuffledArtists);
@@ -126,59 +133,72 @@ export default function Artist1() {
 
   return (
     <>
+      <Header />
+
       <div className="md:px-24 flex flex-col justify-center items-center h-full">
-        <p className=" font-bold mb-8 mt-2 text-3xl sm:text-5xl antialiased  bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent md:p-2 p-4">
-          Guess Your Top 5
-        </p>
-
-        <div className="flex flex-row flex-wrap md:flex-row md:flex-nowrap">
-          {Object.entries(shuffledArtists).length === 0 ? (
-            <p>Nothing to display 😿 check your session</p>
-          ) : (
-            Object.entries(shuffledArtists).map(([key, artist]) => (
-              <Artist
-                key={`shuffled-${key}`}
-                image={artist.image}
-                name={artist.name}
-                clickOrder={clickOrder[key]} // Pass clickOrder
-                onClick={() => handleClick(key)} // Handle click
-              />
-            ))
-          )}
-        </div>
-        {orderCounter == 6 ? (
-          <Button onClick={result} className="">
-            Check
-          </Button>
-        ) : (
-          <></>
-        )}
-
-        {showResult ? (
-          <div>
-            <ArtistResult
-              correct={correct}
-              incorrect={incorrect}
-              original={originalArtists}
-            />
+        {clickPlay ? (
+          <>
+            <p className=" font-bold mb-8 mt-2 text-3xl sm:text-5xl antialiased  bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent md:p-2 p-4">
+              Guess Your Top 5
+            </p>
 
             <div className="flex flex-row flex-wrap md:flex-row md:flex-nowrap">
               {Object.entries(shuffledArtists).length === 0 ? (
                 <p>Nothing to display 😿 check your session</p>
               ) : (
                 Object.entries(shuffledArtists).map(([key, artist]) => (
-                  <ArtistR
+                  <Artist
                     key={`shuffled-${key}`}
                     image={artist.image}
                     name={artist.name}
-                    isCorrect={artist.isCorrect}
+                    clickOrder={clickOrder[key]} // Pass clickOrder
+                    onClick={() => handleClick(key)} // Handle click
                   />
                 ))
               )}
             </div>
-          </div>
+            {orderCounter == 6 ? (
+              <Button onClick={result} className="">
+                Check
+              </Button>
+            ) : (
+              <></>
+            )}
+
+            {showResult ? (
+              <div className="flex flex-col w-80 md:w-full">
+                <ArtistResult
+                  correct={correct}
+                  incorrect={incorrect}
+                  original={originalArtists}
+                />
+
+                <div className="flex justify-center items-center m-2">
+                  <p className="scroll-m-20 text-2xl font-bold tracking-tight">
+                    Your Guesses 👇
+                  </p>
+                </div>
+                <div className="flex flex-row flex-wrap md:flex-row md:flex-nowrap">
+                  {Object.entries(shuffledArtists).length === 0 ? (
+                    <p>Nothing to display 😿 check your session</p>
+                  ) : (
+                    Object.entries(shuffledArtists).map(([key, artist]) => (
+                      <ArtistR
+                        key={`shuffled-${key}`}
+                        image={artist.image}
+                        name={artist.name}
+                        isCorrect={artist.isCorrect}
+                      />
+                    ))
+                  )}
+                </div>
+              </div>
+            ) : (
+              <></>
+            )}
+          </>
         ) : (
-          <></>
+          <GuessArtists setClickPlay={setClickPlay} />
         )}
       </div>
     </>

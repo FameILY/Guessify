@@ -2,12 +2,13 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-export default function GuessArtists() {
+export default function GuessArtists({setClickPlay}) {
   const { data: session } = useSession();
   const router = useRouter();
 
   const handleClick = () => {
-    router.push("/artists");
+    setClickPlay(true);
+    
   };
 
   return (
