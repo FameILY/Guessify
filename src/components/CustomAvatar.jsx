@@ -23,7 +23,7 @@ export default function CustomAvatar({ src }) {
 
   async function login(event) {
     try {
-      await signIn("spotify");
+      await signIn("spotify", { prompt: "consent" });
 
       if (session) {
         console.log(session);

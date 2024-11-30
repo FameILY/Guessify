@@ -83,7 +83,7 @@ const options = {
       session.accessToken = token.accessToken;
       session.error = token.error;
       session.accessTokenExpires = token.accessTokenExpires;
-      console.log("Session:",session);
+      // console.log("Session:",session);
       return session;
     },
   },

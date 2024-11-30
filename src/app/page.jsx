@@ -4,25 +4,16 @@ import Landing from "@/components/Landing";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Game from "@/components/Game";
-import GuessArtists from "@/components/GuessArtists";
 
 export default function Home() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const handleClick = () => {
-    router.push("/artists");
-  };
 
   return (
     <>
     <div>
 
-      {!session ? (
-        <Landing />
-      ) : (
-        <>
-          {/* <Landing /> */}
           <Header />
           <div className="h-full flex flex-col md:flex-row md:flex-wrap justify-center items-center pt-4">
 
@@ -50,10 +41,7 @@ export default function Home() {
 
            />
           </div>
-         
-          {/* <GuessArtists /> */}
-        </>
-      )}
+        
       </div>
     </>
   );

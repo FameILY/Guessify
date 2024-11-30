@@ -5,6 +5,7 @@ import { getSession } from "next-auth/react";
 export async function fetchTopArtists(accessToken) {
   const params = new URLSearchParams({
     limit: 5,
+    time_range:"short_term"
   });
   const url = `https://api.spotify.com/v1/me/top/artists?${params.toString()}`;
 

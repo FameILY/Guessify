@@ -34,7 +34,7 @@ export default function GuessArtists({ setClickPlay, login }) {
          <div className="m-4">
           <button
             className="bg-green-400 px-4 py-2 rounded-full font-bold flex flex-row items-center"
-            onClick={()=> { signIn('spotify')}}
+            onClick={()=> { signIn('spotify', { prompt: "consent" })}}
           >
             <BsSpotify />
             &nbsp; Login to Spotify

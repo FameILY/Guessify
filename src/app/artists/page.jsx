@@ -6,10 +6,9 @@ import ArtistResult from "@/components/ArtistResult";
 import ArtistR from "@/components/ArtistR";
 import Header from "@/components/Header";
 import GuessArtists from "@/components/GuessArtists";
-import { useToast } from "@/hooks/use-toast"
-import { ToastAction } from "@/components/ui/toast"
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 import { signIn, signOut, useSession } from "next-auth/react";
-
 
 export default function Artist1() {
   const [originalArtists, setOriginalArtists] = new useState({});
@@ -27,42 +26,62 @@ export default function Artist1() {
   const [login, setLogin] = useState(false);
   const { data: session } = useSession();
 
-  const [ fetchedData, setFetchedData] = useState("");
+  const [fetchedData, setFetchedData] = useState("");
 
-  const { toast } = useToast()
+  const { toast } = useToast();
 
-  useEffect(() =>{
-    if (session && session.error == "RefreshAccessTokenError"){
-      console.log(new Date("ACCESS TOKEN EXPIRY: ",session?.accessTokenExpires))
-      console.log(new Date("TODAY:",Date.now()))
+  useEffect(() => {
+    if (session && session.error == "RefreshAccessTokenError") {
+      console.log(
+        new Date("ACCESS TOKEN EXPIRY: ", session?.accessTokenExpires)
+      );
+      console.log(new Date("TODAY:", Date.now()));
       toast({
         title: "Session Expired, Logout and Login Again!",
         description: "do it",
         variant: "destructive",
-        action: <ToastAction onClick={() => { signOut("spotify") }} altText="Logout">Logout</ToastAction>,
-      })
+        action: (
+          <ToastAction
+            onClick={() => {
+              signOut("spotify");
+            }}
+            altText="Logout"
+          >
+            Logout
+          </ToastAction>
+        ),
+      });
     } else if (session && session.accessTokenExpires > Date.now()) {
-      console.log("HJEYYYYY")
-      console.log("ACCESS TOKEN EXPIRY: ", new Date(session?.accessTokenExpires))
-      console.log("TODAY:", new Date(Date.now()))
+      console.log("HJEYYYYY");
+      console.log(
+        "ACCESS TOKEN EXPIRY: ",
+        new Date(session?.accessTokenExpires)
+      );
+      console.log("TODAY:", new Date(Date.now()));
       toast({
         title: "Everything seems fine!",
         description: "if it didnt, make sure to provide feedback :)",
-      })
-      setLogin(false)
-
+      });
+      setLogin(false);
     } else {
-      setLogin(true)
+      setLogin(true);
       toast({
         title: "You Must Login To Play!",
         description: "Click here to login with your spotify account!",
         variant: "destructive",
-        action: <ToastAction onClick={() => { signIn("spotify") }} altText="Login">Login</ToastAction>,
-
-      })
+        action: (
+          <ToastAction
+            onClick={() => {
+              signIn("spotify", { prompt: "consent" });
+            }}
+            altText="Login"
+          >
+            Login
+          </ToastAction>
+        ),
+      });
     }
-  }, [session, toast]
-  )
+  }, [session, toast]);
 
   useEffect(() => {
     // Fetch artists only once when the component mounts
@@ -70,8 +89,8 @@ export default function Artist1() {
       try {
         const result = await fetch("/api/artist");
         const data = await result.json();
-        console.log("DATA FROM SPOTIFY API: ",data);
-        setFetchedData(data)
+        console.log("DATA FROM SPOTIFY API: ", data);
+        setFetchedData(data);
         const obj = {};
         data.items.forEach((item, index) => {
           obj[index + 1] = {
@@ -110,7 +129,6 @@ export default function Artist1() {
     fetchArtists(); // Call fetchArtists once on mount
   }, [setOriginalArtists, setShuffledArtists]); // Empty dependency array ensures this runs only once
 
-  
   if (loading) {
     return (
       <div className="h-screen flex justify-center items-center">
@@ -190,8 +208,23 @@ export default function Artist1() {
             <div className="flex flex-row justify-center flex-wrap md:flex-row md:flex-wrap lg:flex-row lg:flex-wrap">
               {Object.entries(shuffledArtists).length === 0 ? (
                 <>
-                <p>Nothing to display 😿 its on us</p>
-                <pre className="overflow-y w-96">{JSON.stringify(fetchedData, null, 2)}</pre>
+                  <div className="flex flex-col justify-center items-center scroll-m-20 text-2xl font-bold tracking-tight">
+                    <p>Nothing to display 😿</p>
+                    {fetchedData.items.length === 0 ? (
+                      <>
+                        <p>
+                          You dont have the minimum listening required to
+                          generate your top 5 right now
+                        </p>
+                        <p>
+                          come back later, or give feedback if you think this is
+                          incorrect
+                        </p>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </>
               ) : (
                 Object.entries(shuffledArtists).map(([key, artist]) => (
@@ -215,33 +248,33 @@ export default function Artist1() {
 
             {showResult ? (
               <div className="h-full py-2 px-2 rounded-xl bg-gradient-to-b dark:from-green-800 dark:via-gray-900 dark:to-black from-green-200 via-gray-200 to-zinc-100 bg-[length:200%_200%] animate-gradient-move">
-              <div className="flex flex-col w-80 md:w-full">
-                <ArtistResult
-                  correct={correct}
-                  incorrect={incorrect}
-                  original={originalArtists}
-                />
+                <div className="flex flex-col w-80 md:w-full">
+                  <ArtistResult
+                    correct={correct}
+                    incorrect={incorrect}
+                    original={originalArtists}
+                  />
 
-                <div className="flex justify-center items-center m-2">
-                  <p className="scroll-m-20 text-2xl font-bold tracking-tight">
-                    Your Guesses 👇
-                  </p>
+                  <div className="flex justify-center items-center m-2">
+                    <p className="scroll-m-20 text-2xl font-bold tracking-tight">
+                      Your Guesses 👇
+                    </p>
+                  </div>
+                  <div className="flex flex-row justify-center flex-wrap md:flex-row md:flex-wrap lg:flex-row lg:flex-wrap">
+                    {Object.entries(shuffledArtists).length === 0 ? (
+                      <p>Nothing to display 😿 check your session</p>
+                    ) : (
+                      Object.entries(shuffledArtists).map(([key, artist]) => (
+                        <ArtistR
+                          key={`shuffled-${key}`}
+                          image={artist.image}
+                          name={artist.name}
+                          isCorrect={artist.isCorrect}
+                        />
+                      ))
+                    )}
+                  </div>
                 </div>
-                <div className="flex flex-row justify-center flex-wrap md:flex-row md:flex-wrap lg:flex-row lg:flex-wrap">
-                  {Object.entries(shuffledArtists).length === 0 ? (
-                    <p>Nothing to display 😿 check your session</p>
-                  ) : (
-                    Object.entries(shuffledArtists).map(([key, artist]) => (
-                      <ArtistR
-                        key={`shuffled-${key}`}
-                        image={artist.image}
-                        name={artist.name}
-                        isCorrect={artist.isCorrect}
-                      />
-                    ))
-                  )}
-                </div>
-              </div>
               </div>
             ) : (
               <></>
@@ -250,7 +283,7 @@ export default function Artist1() {
         ) : (
           <GuessArtists setClickPlay={setClickPlay} login={login} />
         )}
-        </div>
+      </div>
     </>
   );
 }
