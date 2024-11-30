@@ -29,7 +29,7 @@ export async function GET(req) {
   if (token?.accessToken) {
     try {
       const data = await fetchTopArtists(token.accessToken);
-      // console.log(data)
+      console.log("DATA:",data)
       return NextResponse.json(data, { status: 200 });
     } catch (error) {
       return new Response(error, { status: 500 });

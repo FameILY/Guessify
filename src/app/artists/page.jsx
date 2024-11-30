@@ -6,6 +6,10 @@ import ArtistResult from "@/components/ArtistResult";
 import ArtistR from "@/components/ArtistR";
 import Header from "@/components/Header";
 import GuessArtists from "@/components/GuessArtists";
+import { useToast } from "@/hooks/use-toast"
+import { ToastAction } from "@/components/ui/toast"
+import { signIn, signOut, useSession } from "next-auth/react";
+
 
 export default function Artist1() {
   const [originalArtists, setOriginalArtists] = new useState({});
@@ -20,6 +24,45 @@ export default function Artist1() {
   const [incorrect, setIncorrect] = useState(0);
 
   const [clickPlay, setClickPlay] = useState(false);
+  const [login, setLogin] = useState(false);
+  const { data: session } = useSession();
+
+  const [ fetchedData, setFetchedData] = useState("");
+
+  const { toast } = useToast()
+
+  useEffect(() =>{
+    if (session && session.error == "RefreshAccessTokenError"){
+      console.log(new Date("ACCESS TOKEN EXPIRY: ",session?.accessTokenExpires))
+      console.log(new Date("TODAY:",Date.now()))
+      toast({
+        title: "Session Expired, Logout and Login Again!",
+        description: "do it",
+        variant: "destructive",
+        action: <ToastAction onClick={() => { signOut("spotify") }} altText="Logout">Logout</ToastAction>,
+      })
+    } else if (session && session.accessTokenExpires > Date.now()) {
+      console.log("HJEYYYYY")
+      console.log("ACCESS TOKEN EXPIRY: ", new Date(session?.accessTokenExpires))
+      console.log("TODAY:", new Date(Date.now()))
+      toast({
+        title: "Everything seems fine!",
+        description: "if it didnt, make sure to provide feedback :)",
+      })
+      setLogin(false)
+
+    } else {
+      setLogin(true)
+      toast({
+        title: "You Must Login To Play!",
+        description: "Click here to login with your spotify account!",
+        variant: "destructive",
+        action: <ToastAction onClick={() => { signIn("spotify") }} altText="Login">Login</ToastAction>,
+
+      })
+    }
+  }, [session, toast]
+  )
 
   useEffect(() => {
     // Fetch artists only once when the component mounts
@@ -27,7 +70,8 @@ export default function Artist1() {
       try {
         const result = await fetch("/api/artist");
         const data = await result.json();
-        console.log(data);
+        console.log("DATA FROM SPOTIFY API: ",data);
+        setFetchedData(data)
         const obj = {};
         data.items.forEach((item, index) => {
           obj[index + 1] = {
@@ -66,6 +110,7 @@ export default function Artist1() {
     fetchArtists(); // Call fetchArtists once on mount
   }, [setOriginalArtists, setShuffledArtists]); // Empty dependency array ensures this runs only once
 
+  
   if (loading) {
     return (
       <div className="h-screen flex justify-center items-center">
@@ -144,7 +189,10 @@ export default function Artist1() {
 
             <div className="flex flex-row justify-center flex-wrap md:flex-row md:flex-wrap lg:flex-row lg:flex-wrap">
               {Object.entries(shuffledArtists).length === 0 ? (
-                <p>Nothing to display 😿 check your session</p>
+                <>
+                <p>Nothing to display 😿 its on us</p>
+                <pre className="overflow-y w-96">{JSON.stringify(fetchedData, null, 2)}</pre>
+                </>
               ) : (
                 Object.entries(shuffledArtists).map(([key, artist]) => (
                   <Artist
@@ -200,7 +248,7 @@ export default function Artist1() {
             )}
           </>
         ) : (
-          <GuessArtists setClickPlay={setClickPlay} />
+          <GuessArtists setClickPlay={setClickPlay} login={login} />
         )}
         </div>
     </>

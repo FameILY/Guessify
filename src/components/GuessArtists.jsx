@@ -1,14 +1,14 @@
 "use client";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { BsSpotify } from "react-icons/bs";
 
-export default function GuessArtists({setClickPlay}) {
+export default function GuessArtists({ setClickPlay, login }) {
   const { data: session } = useSession();
   const router = useRouter();
 
   const handleClick = () => {
     setClickPlay(true);
-    
   };
 
   return (
@@ -29,22 +29,39 @@ export default function GuessArtists({setClickPlay}) {
           </p>
         </div>
 
-        <button
-          className="relative overflow-hidden px-8 py-3 rounded-full text-lg font-semibold text-zinc-100 bg-gradient-to-r from-green-500 to-green-400 shadow-lg transition-transform duration-300 transform hover:scale-105 hover:shadow-xl active:scale-95 focus:outline-none"
-          onClick={handleClick}
-        >
-          <span className="absolute inset-0 bg-white opacity-0 hover:opacity-20 transition-opacity duration-300"></span>
-          <span
-            className="absolute -inset-0 bg-white rounded-full opacity-0 animate-ping pointer-events-none"
-            style={{
-              width: "200%",
-              height: "200%",
-              left: "-50%",
-              top: "-50%",
-            }}
-          ></span>
-          Play
-        </button>
+        {login ? (
+          <>
+         <div className="m-4">
+          <button
+            className="bg-green-400 px-4 py-2 rounded-full font-bold flex flex-row items-center"
+            onClick={()=> { signIn('spotify')}}
+          >
+            <BsSpotify />
+            &nbsp; Login to Spotify
+          </button>
+        </div>
+          
+          </>
+        ) : (
+          <>
+            <button
+              className="relative overflow-hidden px-8 py-3 rounded-full text-lg font-semibold text-zinc-100 bg-gradient-to-r from-green-500 to-green-400 shadow-lg transition-transform duration-300 transform hover:scale-105 hover:shadow-xl active:scale-95 focus:outline-none"
+              onClick={handleClick}
+            >
+              {/* <span className="absolute inset-0 bg-white opacity-0 hover:opacity-20 transition-opacity duration-300"></span> */}
+              <span
+                className="absolute -inset-0 bg-white rounded-full opacity-0 animate-ping pointer-events-none"
+                style={{
+                  width: "200%",
+                  height: "200%",
+                  left: "-50%",
+                  top: "-50%",
+                }}
+              ></span>
+              Play
+            </button>
+          </>
+        )}
       </div>
     </>
   );
