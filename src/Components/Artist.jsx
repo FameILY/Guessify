@@ -20,31 +20,37 @@ export default function Artist({ image, name, clickOrder, onClick }) {
 
   return (
     <>
-      <Card
-        className="relative max-w-96 dark:hover:border-green-300 hover:border-green-600 hover:scale-110 transition-all duration-150 m-6"
+      <div
+        className="group relative max-w-80 md:max-w-60 lg:max-w-52 dark:hover:border-green-300 hover:border-green-600 hover:scale-110 transition-all duration-150 m-6"
         
       >
+        <div className="">
+
         {clickOrder && (
           <div
-            className="absolute top-[-5px] left-[-5px] bg-green-500 px-5 py-3 rounded-full"
+            className="absolute top-[44px] right-[-5px] group-hover:top-[20px] group-hover:right-[-20px] bg-green-500 px-5 py-3 rounded-full transition-all scroll-m-20 text-base font-bold tracking-tighter"
             style={{ transform: "translate(-50%, -50%)" }}
           >
             {clickOrder}
           </div>
         )}
+        </div>
 
-        <CardHeader onClick={onClick}>
-          <Image src={image} alt={"game Image"} width={500} height={500} />
-        </CardHeader>
-
-        <CardContent className="px-6">
-          <CardTitle className="scroll-m-20 text-xl font-bold tracking-tighter lg:text-xl">
+        <CardHeader  className="" onClick={onClick}>
+          <Image className="rounded-lg " src={image} alt={"game Image"} width={500} height={500} />
+          <CardTitle className=" text-zinc-100 dark:text-zinc-100 group-hover:text-zinc-950 dark:group-hover:text-zinc-100 absolute bottom-[25px] left-[24px] group-hover:left-[-15px] group-hover:bottom-[2px] rounded-xl backdrop-blur-sm px-2 bg-opacity-25 scroll-m-20 text-xl font-bold tracking-tighter lg:text-xl transition-all">
             {name}
           </CardTitle>
+        </CardHeader>
+
+        {/* <CardContent className="px-6"> */}
+          {/* <CardTitle className="scroll-m-20 text-xl font-bold tracking-tighter lg:text-xl">
+            {name}
+          </CardTitle> */}
 
           {/* <CardDescription className="scroll-m-20 dark:text-zinc-400 text-lg font-normal tracking-tighter mt-2"></CardDescription> */}
-        </CardContent>
-      </Card>
+        {/* </CardContent> */}
+      </div>
       {/* <div
         className="flex justify-center flex-col rounded shadow p-4 cursor-pointer"
         onClick={onClick}

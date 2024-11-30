@@ -138,11 +138,11 @@ export default function Artist1() {
       <div className="md:px-24 flex flex-col justify-center items-center h-full">
         {clickPlay ? (
           <>
-            <p className=" font-bold mb-8 mt-2 text-3xl sm:text-5xl antialiased  bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent md:p-2 p-4">
+            <p className=" font-extrabold mb-6 mt-2 text-3xl sm:text-5xl antialiased bg-gradient-to-r from-green-400 via-green-500 to-green-600 bg-clip-text text-transparent p-2 tracking-tight">
               Guess Your Top 5
             </p>
 
-            <div className="flex flex-row flex-wrap md:flex-row md:flex-nowrap">
+            <div className="flex flex-row justify-center flex-wrap md:flex-row md:flex-wrap lg:flex-row lg:flex-wrap">
               {Object.entries(shuffledArtists).length === 0 ? (
                 <p>Nothing to display 😿 check your session</p>
               ) : (
@@ -158,7 +158,7 @@ export default function Artist1() {
               )}
             </div>
             {orderCounter == 6 ? (
-              <Button onClick={result} className="">
+              <Button onClick={result} className="my-4">
                 Check
               </Button>
             ) : (
@@ -166,6 +166,7 @@ export default function Artist1() {
             )}
 
             {showResult ? (
+              <div className="h-full py-2 px-2 rounded-xl bg-gradient-to-b dark:from-green-800 dark:via-gray-900 dark:to-black from-green-200 via-gray-200 to-zinc-100 bg-[length:200%_200%] animate-gradient-move">
               <div className="flex flex-col w-80 md:w-full">
                 <ArtistResult
                   correct={correct}
@@ -178,7 +179,7 @@ export default function Artist1() {
                     Your Guesses 👇
                   </p>
                 </div>
-                <div className="flex flex-row flex-wrap md:flex-row md:flex-nowrap">
+                <div className="flex flex-row justify-center flex-wrap md:flex-row md:flex-wrap lg:flex-row lg:flex-wrap">
                   {Object.entries(shuffledArtists).length === 0 ? (
                     <p>Nothing to display 😿 check your session</p>
                   ) : (
@@ -193,6 +194,7 @@ export default function Artist1() {
                   )}
                 </div>
               </div>
+              </div>
             ) : (
               <></>
             )}
@@ -200,7 +202,7 @@ export default function Artist1() {
         ) : (
           <GuessArtists setClickPlay={setClickPlay} />
         )}
-      </div>
+        </div>
     </>
   );
 }

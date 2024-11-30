@@ -13,7 +13,7 @@ export default function GuessArtists({setClickPlay}) {
 
   return (
     <>
-      <div className="flex justify-center items-center flex-col h-full">
+      <div className="flex justify-center items-center flex-col h-full mt-12">
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl p-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
           Guess your artists
         </h1>

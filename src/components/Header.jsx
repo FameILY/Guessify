@@ -34,12 +34,15 @@ export default function Header() {
 
   return (
     <>
-      <nav className="bg-zinc-950 bg-opacity-70 backdrop-blur md:px-32 sticky top-0 z-50 flex items-center gap-2 justify-between p-2">
-        <p className="text-lg font-semibold">Guessify</p>
-        <p onClick={ ()=> { router.back()}}>Back</p>
-
+      <nav className="backdrop-blur md:px-32 sticky top-0 z-50 flex items-center gap-2 justify-between p-2">
         <div className="flex flex-row items-center">
-          <p className="text-base me-4">
+       
+        <p className="text-lg font-semibold">Guessify</p>
+
+        </div>
+
+        <div className="flex flex-row items-center gap-2">
+          <p className="text-base">
             {session?.user.name || ""}
           </p>
           <ModeToggle/>

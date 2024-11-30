@@ -80,7 +80,7 @@ function ArtistResult({ correct, incorrect, original }) {
 
   return (
     <div className="flex flex-col justify-center items-center mt-4">
-      <p className="scroll-m-20 text-3xl font-bold tracking-tight lg:text-5xl m-2">
+      <p className="  hover:text-shadow-glow scroll-m-20 text-3xl font-bold tracking-tight lg:text-5xl m-2 transition-all">
         {headline}
       </p>  
       <progress

@@ -26,12 +26,12 @@ export default function ArtistR({ image, name, isCorrect }) {
   return (
     <>
       <Card
-        className={`max-w-96 ${bgColor} dark:hover:border-green-300 hover:border-green-600 hover:scale-110 transition-all duration-150 m-6`}
+        className={`max-w-80 md:max-w-60 lg:max-w-52 ${bgColor} hover:scale-110 transition-all duration-150 m-6`}
        
       >
 
         <CardHeader>
-          <Image src={image} alt={"game Image"} width={500} height={500} />
+          <Image className="rounded-md" src={image} alt={"game Image"} width={500} height={500} />
         </CardHeader>
 
         <CardContent className="px-6">

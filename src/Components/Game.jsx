@@ -9,7 +9,7 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-function Game({ image, title, desc, link }) {
+function Game({ image, title, desc, link, isLocked }) {
   const router = useRouter();
 
   const handleCardClick = () => {
@@ -19,7 +19,7 @@ function Game({ image, title, desc, link }) {
   return (
     <Card
       onClick={handleCardClick}
-      className="max-w-64 dark:hover:border-green-300 hover:border-green-600 hover:scale-105 transition-all duration-150 m-6 cursor-pointer"
+      className={`max-w-64 ${ isLocked ? " bg-zinc-200 dark:bg-zinc-900 dark:hover:border-zinc-300 hover:border-zinc-600" : " dark:hover:border-green-300 hover:border-green-600"}  hover:scale-105 transition-all duration-150 m-6 cursor-pointer`}
     >
       <CardHeader>
         <Image src={image} alt={"game Image"} width={200} height={200} />
