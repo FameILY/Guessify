@@ -10,7 +10,7 @@ import {
     CardDescription,
   } from "@/components/ui/card";
 
-function ArtistResult({ correct, incorrect, original }) {
+function ArtistResult({ correct, incorrect, original, limit }) {
   const [headline, setHeadline] = useState("");
   const [progress, setProgress] = useState({ class: "", value: "" });
   const [showAnswer, setShowAnswer] = useState(false);
@@ -43,40 +43,48 @@ function ArtistResult({ correct, incorrect, original }) {
       value: "",
     };
 
-    switch (correct) {
-      case 0:
-        updatedHeadline = "Oops, better luck next time! 🎯";
-        updatedProgress = { class: "progress progress-error w-32 md:w-96  m-2", value: "0" };
-        break;
-      case 1:
-        updatedHeadline = "One hit wonder! Keep it up! 🎶";
-        updatedProgress = { class: "progress progress-error w-32 md:w-96 m-2", value: "20" };
-        break;
-      case 2:
-        updatedHeadline = "You're getting the hang of it! 🎧";
-        updatedProgress = { class: "progress progress-warning w-32 md:w-96 m-2", value: "40" };
-        break;
-      case 3:
-        updatedHeadline = "You know your tunes pretty well! 🎵";
-        updatedProgress = { class: "progress progress-info w-32 md:w-96 m-2", value: "60" };
-        break;
-      case 4:
-        updatedHeadline = "You nailed it… almost! 🥳";
-        updatedProgress = { class: "progress progress-accent w-32 md:w-96 m-2", value: "80" };
-        break;
-      case 5:
-        updatedHeadline = "Perfect score! You're a music wizard! 🎉";
-        updatedProgress = { class: "progress progress-success w-32 md:w-96 m-2", value: "100" };
-        setShowAnswer(true);
-        break;
-      default:
-        updatedHeadline = "Invalid score. Try again!";
-        updatedProgress = { class: "progress progress-error w-32 md:w-96 m-2", value: "0" };
-    }
+    const percentage = Math.floor((correct / limit) * 100);
+
+    switch (true) {
+    case percentage === 0:
+      updatedHeadline = "Oops, better luck next time! 🎯";
+      updatedProgress = { class: "progress progress-error w-32 md:w-96 m-2", value: "0" };
+      break;
+
+    case percentage > 0 && percentage <= 20:
+      updatedHeadline = "One hit wonder! Keep it up! 🎶";
+      updatedProgress = { class: "progress progress-error w-32 md:w-96 m-2", value: `${percentage}` };
+      break;
+
+    case percentage > 20 && percentage <= 40:
+      updatedHeadline = "You're getting the hang of it! 🎧";
+      updatedProgress = { class: "progress progress-warning w-32 md:w-96 m-2", value: `${percentage}` };
+      break;
+
+    case percentage > 40 && percentage <= 60:
+      updatedHeadline = "You know your tunes pretty well! 🎵";
+      updatedProgress = { class: "progress progress-info w-32 md:w-96 m-2", value: `${percentage}` };
+      break;
+
+    case percentage > 60 && percentage <= 80:
+      updatedHeadline = "You nailed it… almost! 🥳";
+      updatedProgress = { class: "progress progress-accent w-32 md:w-96 m-2", value: `${percentage}` };
+      break;
+
+    case percentage > 80 && percentage <= 100:
+      updatedHeadline = "Perfect score! You're a music wizard! 🎉";
+      updatedProgress = { class: "progress progress-success w-32 md:w-96 m-2", value: "100" };
+      setShowAnswer(true);
+      break;
+
+    default:
+      updatedHeadline = "Invalid score. Try again!";
+      updatedProgress = { class: "progress progress-error w-32 md:w-96 m-2", value: "0" };
+  }
 
     setHeadline(updatedHeadline);
     setProgress(updatedProgress);
-  }, [correct]);
+  }, [correct, limit]);
 
   return (
     <div className="flex flex-col justify-center items-center mt-4">

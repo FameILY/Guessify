@@ -2,12 +2,20 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { BsSpotify } from "react-icons/bs";
+import Difficulty from "@/components/Difficulty";
 
-export default function GuessArtists({ setClickPlay, login }) {
+
+export default function GuessArtists({ setClickPlay, setTimeRange, setLimit, login }) {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const handleClick = () => {
+  const handleClick = async (limit, range) => {
+    console.log("CALLED HANDLE CLICK")
+    console.log("LIMIT: ",limit)
+    console.log("RANGE: ",range)
+
+    await setLimit(limit)
+    await setTimeRange(range)
     setClickPlay(true);
   };
 
@@ -44,25 +52,39 @@ export default function GuessArtists({ setClickPlay, login }) {
           </>
         ) : (
           <>
-            <button
-              className="relative overflow-hidden px-8 py-3 rounded-full text-lg font-semibold text-zinc-100 bg-gradient-to-r from-green-500 to-green-400 shadow-lg transition-transform duration-300 transform hover:scale-105 hover:shadow-xl active:scale-95 focus:outline-none"
-              onClick={handleClick}
-            >
-              {/* <span className="absolute inset-0 bg-white opacity-0 hover:opacity-20 transition-opacity duration-300"></span> */}
-              <span
-                className="absolute -inset-0 bg-white rounded-full opacity-0 animate-ping pointer-events-none"
-                style={{
-                  width: "200%",
-                  height: "200%",
-                  left: "-50%",
-                  top: "-50%",
-                }}
-              ></span>
-              Play
-            </button>
+      <div className="flex flex-col flex-wrap md:flex-row justify-center items-center">
+
+          <Difficulty
+          title={"Easy"}
+          desc={"guess the order of your top 5 artists within the last 4 weeks of your listening activity"}
+          image={"/kendrick.jpg"}
+          level="easy"
+          isLocked={false}
+          onClick={ () => { handleClick(5, "short_term")}}
+          />
+          <Difficulty
+          title={"Medium"}
+          desc={"guess the order of your top 10 artists within the last 6 months of your listening activity"}
+          image={"/kendrick.jpg"}
+        level="medium"
+          isLocked={false}
+          onClick={ () => { handleClick(10, "medium_term")}}
+
+          />
+          <Difficulty
+          title={"Hard"}
+          desc={"guess the order of your top 15 artists of all time of your listening activity"}
+          image={"/kendrick.jpg"}
+        level="hard"
+          isLocked={false}
+          onClick={ () => { handleClick(15, "long_term")}}
+          />
+          </div>
+           
           </>
         )}
       </div>
+
     </>
   );
 }

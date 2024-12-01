@@ -23,10 +23,15 @@ export default function Artist1() {
   const [incorrect, setIncorrect] = useState(0);
 
   const [clickPlay, setClickPlay] = useState(false);
+  const [ limit, setLimit] = useState(0)
+  const [ timeRange, setTimeRange] = useState("")
+
+
   const [login, setLogin] = useState(false);
   const { data: session } = useSession();
 
   const [fetchedData, setFetchedData] = useState("");
+  
 
   const { toast } = useToast();
 
@@ -87,7 +92,13 @@ export default function Artist1() {
     // Fetch artists only once when the component mounts
     async function fetchArtists() {
       try {
-        const result = await fetch("/api/artist");
+        const result = await fetch("/api/artist", {
+          headers: {
+            time_range: timeRange,
+            limit: limit,
+          },
+          method: "GET",
+        });
         const data = await result.json();
         console.log("DATA FROM SPOTIFY API: ", data);
         setFetchedData(data);
@@ -127,7 +138,7 @@ export default function Artist1() {
     }
 
     fetchArtists(); // Call fetchArtists once on mount
-  }, [setOriginalArtists, setShuffledArtists]); // Empty dependency array ensures this runs only once
+  }, [setOriginalArtists, setShuffledArtists, timeRange, limit]); // Empty dependency array ensures this runs only once
 
   if (loading) {
     return (
@@ -202,7 +213,7 @@ export default function Artist1() {
         {clickPlay ? (
           <>
             <p className=" font-extrabold mb-6 mt-2 text-3xl sm:text-5xl antialiased bg-gradient-to-r from-green-400 via-green-500 to-green-600 bg-clip-text text-transparent p-2 tracking-tight">
-              Guess Your Top 5
+              Guess Your Top {limit}
             </p>
 
             <div className="flex flex-row justify-center flex-wrap md:flex-row md:flex-wrap lg:flex-row lg:flex-wrap">
@@ -210,7 +221,7 @@ export default function Artist1() {
                 <>
                   <div className="flex flex-col justify-center items-center scroll-m-20 text-2xl font-bold tracking-tight">
                     <p>Nothing to display 😿</p>
-                    {fetchedData.items.length === 0 ? (
+                    {fetchedData.items?.length === 0 ? (
                       <>
                         <p>
                           You dont have the minimum listening required to
@@ -238,7 +249,7 @@ export default function Artist1() {
                 ))
               )}
             </div>
-            {orderCounter == 6 ? (
+            {orderCounter == limit + 1 ? (
               <Button onClick={result} className="my-4">
                 Check
               </Button>
@@ -253,6 +264,7 @@ export default function Artist1() {
                     correct={correct}
                     incorrect={incorrect}
                     original={originalArtists}
+                    limit={limit}
                   />
 
                   <div className="flex justify-center items-center m-2">
@@ -270,6 +282,7 @@ export default function Artist1() {
                           image={artist.image}
                           name={artist.name}
                           isCorrect={artist.isCorrect}
+                      
                         />
                       ))
                     )}
@@ -281,7 +294,7 @@ export default function Artist1() {
             )}
           </>
         ) : (
-          <GuessArtists setClickPlay={setClickPlay} login={login} />
+          <GuessArtists setClickPlay={setClickPlay} setTimeRange={setTimeRange} setLimit={setLimit} login={login} />
         )}
       </div>
     </>
