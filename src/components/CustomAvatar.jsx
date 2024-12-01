@@ -8,10 +8,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 
 export default function CustomAvatar({ src }) {
   const { data: session } = useSession();
+  const router = useRouter()
 
   async function logout() {
     try {
@@ -48,6 +50,8 @@ export default function CustomAvatar({ src }) {
         { session ? (
           <>
         <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => { router.push('https://www.spotify.com/logout/') }}>Logout spotify from this browser, beaware</DropdownMenuItem>
+
           </>
         ) : (
           <>
