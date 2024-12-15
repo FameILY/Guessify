@@ -37,7 +37,7 @@ export default function Header() {
       <nav className="backdrop-blur md:px-32 sticky top-0 z-50 flex items-center gap-2 justify-between p-2">
         <div className="flex flex-row items-center">
        
-        <p className="text-lg font-semibold">Guessify</p>
+        <a href="/"><p className="text-lg font-semibold">Guessify</p></a>
 
         </div>
 
