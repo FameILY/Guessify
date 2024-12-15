@@ -5,7 +5,7 @@ import { BsSpotify } from "react-icons/bs";
 import Difficulty from "@/components/Difficulty";
 
 
-export default function GuessFriendsArtists({ setClickPlay }) {
+export default function GuessFriendsArtists({ setClickPlay, name, limit, range }) {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -52,10 +52,10 @@ export default function GuessFriendsArtists({ setClickPlay }) {
       <div className="flex flex-col flex-wrap md:flex-row justify-center items-center">
 
           <Difficulty
-          title={"Jane's Top 5"}
-          desc={"guess the order of top 5 artists within the last 4 weeks of their listening activity"}
+          title={`${name}'s Top ${limit}`}
+          desc={`guess the order of top ${limit} artists within their listening activity`}
           image={"/kendrick.jpg"}
-          level="easy"
+          level={`${limit > 5 ? "medium" : "easy"}`}
           isLocked={false}
           onClick={handleClick}
           />

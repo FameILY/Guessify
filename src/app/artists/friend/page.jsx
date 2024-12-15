@@ -333,7 +333,7 @@ export default function Artist1() {
             )}
           </>
         ) : (
-          <GuessFriendsArtists setClickPlay={setClickPlay} />
+          <GuessFriendsArtists setClickPlay={setClickPlay} name={name} limit={limit} range={timeRange} />
         )}
       </div>
     </>
