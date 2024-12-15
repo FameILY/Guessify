@@ -11,7 +11,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 
-function ArtistResult({ correct, incorrect, original, limit, range, name }) {
+function ArtistResult({ correct, incorrect, original, limit, range }) {
   const [headline, setHeadline] = useState("");
   const [progress, setProgress] = useState({ class: "", value: "" });
   const [showAnswer, setShowAnswer] = useState(false);
@@ -61,7 +61,7 @@ function ArtistResult({ correct, incorrect, original, limit, range, name }) {
     const encrypted = encrypt(JSON.stringify(data));
     // const encodedData = encodeURIComponent(JSON.stringify(data));
 
-    const link = window.location.href + "/friend?data=" + encodeURIComponent(encrypted.encryptedData) + "&range="+range+ "&limit="+limit+ "&name="+name;
+    const link = window.location.href + "/friend?data=" + encodeURIComponent(encrypted.encryptedData) + "&range="+range+ "&limit="+limit;
     return link;
   };
 
@@ -71,8 +71,8 @@ function ArtistResult({ correct, incorrect, original, limit, range, name }) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Guess My Top Artists",
-          text: "Guess "+name+ "'s top "+limit,
+          title: "Guess Your Top Artists",
+          text: shareText,
           url: challengeLink,
         });
         console.log("Shared successfully!");
@@ -103,7 +103,7 @@ function ArtistResult({ correct, incorrect, original, limit, range, name }) {
         break;
 
       case percentage > 0 && percentage <= 20:
-        updatedHeadline = "One hit wonder! Keep it up! 🎶";
+        updatedHeadline = "One hit wonder! Keep it up!";
         updatedProgress = {
           class: "progress progress-error w-32 md:w-96 m-2",
           value: `${percentage}`,

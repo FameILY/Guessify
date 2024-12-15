@@ -2,13 +2,15 @@
 import Artist from "@/components/Artist";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import ArtistResult from "@/components/ArtistResult";
+import ArtistResultFriend from "@/components/ArtistResult";
 import ArtistR from "@/components/ArtistR";
 import Header from "@/components/Header";
-import GuessArtists from "@/components/GuessArtists";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { signIn, signOut, useSession } from "next-auth/react";
+import GuessFriendsArtists from "@/components/GuessFriendsArtists";
+import { useRouter } from "next/navigation";
+import crypto from "crypto";
 
 export default function Artist1() {
   const [originalArtists, setOriginalArtists] = new useState({});
@@ -30,103 +32,126 @@ export default function Artist1() {
   const { data: session } = useSession();
 
   const [fetchedData, setFetchedData] = useState("");
+  const [name, setName] = useState("");
 
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (session && session.error == "RefreshAccessTokenError") {
-      console.log(
-        new Date("ACCESS TOKEN EXPIRY: ", session?.accessTokenExpires)
-      );
-      console.log(new Date("TODAY:", Date.now()));
-      toast({
-        title: "Session Expired, Logout and Login Again!",
-        description: "do it",
-        variant: "destructive",
-        action: (
-          <ToastAction
-            onClick={() => {
-              signOut("spotify");
-            }}
-            altText="Logout"
-          >
-            Logout
-          </ToastAction>
-        ),
-      });
-    } else if (session && session.accessTokenExpires > Date.now()) {
-      console.log("HJEYYYYY");
-      console.log(
-        "ACCESS TOKEN EXPIRY: ",
-        new Date(session?.accessTokenExpires)
-      );
-      console.log("TODAY:", new Date(Date.now()));
-      toast({
-        title: "Everything seems fine!",
-        description: "if it didnt, make sure to provide feedback :)",
-      });
-      setLogin(false);
-    } else {
-      setLogin(true);
-      toast({
-        title: "You Must Login To Play!",
-        description: "Click here to login with your spotify account!",
-        variant: "destructive",
-        action: (
-          <ToastAction
-            onClick={() => {
-              signIn("spotify", { prompt: "consent" });
-            }}
-            altText="Login"
-          >
-            Login
-          </ToastAction>
-        ),
-      });
-    }
-  }, [session, toast]);
+  const router = useRouter();
+  //   useEffect(() => {
+  //     if (session && session.error == "RefreshAccessTokenError") {
+  //       console.log(
+  //         new Date("ACCESS TOKEN EXPIRY: ", session?.accessTokenExpires)
+  //       );
+  //       console.log(new Date("TODAY:", Date.now()));
+  //       toast({
+  //         title: "Session Expired, Logout and Login Again!",
+  //         description: "do it",
+  //         variant: "destructive",
+  //         action: (
+  //           <ToastAction
+  //             onClick={() => {
+  //               signOut("spotify");
+  //             }}
+  //             altText="Logout"
+  //           >
+  //             Logout
+  //           </ToastAction>
+  //         ),
+  //       });
+  //     } else if (session && session.accessTokenExpires > Date.now()) {
+  //       console.log("HJEYYYYY");
+  //       console.log(
+  //         "ACCESS TOKEN EXPIRY: ",
+  //         new Date(session?.accessTokenExpires)
+  //       );
+  //       console.log("TODAY:", new Date(Date.now()));
+  //       toast({
+  //         title: "Everything seems fine!",
+  //         description: "if it didnt, make sure to provide feedback :)",
+  //       });
+  //       setLogin(false);
+  //     } else {
+  //       setLogin(true);
+  //       toast({
+  //         title: "You Must Login To Play!",
+  //         description: "Click here to login with your spotify account!",
+  //         variant: "destructive",
+  //         action: (
+  //           <ToastAction
+  //             onClick={() => {
+  //               signIn("spotify", { prompt: "consent" });
+  //             }}
+  //             altText="Login"
+  //           >
+  //             Login
+  //           </ToastAction>
+  //         ),
+  //       });
+  //     }
+  //   }, [session, toast]);
+
+  const decrypt = (encryptedText, key, iv) => {
+    const algorithm = "aes-256-cbc";
+    const decipher = crypto.createDecipheriv(algorithm, key, iv);
+    let decrypted = decipher.update(encryptedText, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+    return decrypted;
+  };
+
+  // Define your encryption key and IV (these should be securely stored)
+  const key = Buffer.from(
+    "OjrNnzm0eB5qHfvu9yf1rZkzWm9cNVV6+4Lq3bh8r6U=",
+    "base64"
+  ); // Make sure to securely manage this key
+  const iv = Buffer.from("To8yC6Jx8yP8GfXj42d73g==", "base64");
+  // Same for IV
 
   useEffect(() => {
     // Fetch artists only once when the component mounts
     async function fetchArtists() {
+      // console.log("Router ready:", router.isReady); // Debugging log
+
       try {
-        const result = await fetch("/api/artist", {
-          headers: {
-            time_range: timeRange,
-            limit: limit,
-          },
-          method: "GET",
-        });
-        const data = await result.json();
-        // console.log("DATA FROM SPOTIFY API: ", data);
-        setFetchedData(data);
-        const obj = {};
-        data.items.forEach((item, index) => {
-          obj[index + 1] = {
-            name: item.name,
-            image: item.images[0]?.url,
-            // url: item.external_urls[0].spotify,
-            // genres: item.genres
-          };
-        });
+        const url = new URLSearchParams(window.location.search);
+        const data = url.get("data"); // Get query param
 
-        // Set the original list
-        setOriginalArtists(obj);
-        console.log("original artist", obj);
+        if (data) {
+          //   const obj = data ? JSON.parse(decodeURIComponent(data)) : {};
+          console.log("YESSS")
+          const decryptedData = decrypt(data, key, iv); // Apply decryption
+          const obj = JSON.parse(decryptedData); // Parse the decrypted JSON data
 
-        // Shuffle the object
-        const keys = Object.keys(obj);
-        for (let i = keys.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [keys[i], keys[j]] = [keys[j], keys[i]]; // Swap elements
+          const range = url.get("range");
+          await setTimeRange(range);
+          const limit = parseInt(url.get("limit"), 10);
+          await setLimit(limit);
+
+          const name = url.get("name");
+          await setName(name)
+
+          setFetchedData(obj);
+
+          // Set the original list
+          setOriginalArtists(obj);
+          // console.log("original artist", obj);
+
+          // Shuffle the object
+          const keys = Object.keys(obj);
+          for (let i = keys.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [keys[i], keys[j]] = [keys[j], keys[i]]; // Swap elements
+          }
+
+          const shuffledObj = {};
+          keys.forEach((key, index) => {
+            shuffledObj[index + 1] = obj[key];
+          });
+
+          setShuffledArtists(shuffledObj);
+        } else {
+          console.log("NO");
+          setFetchedData(null)
         }
-
-        const shuffledObj = {};
-        keys.forEach((key, index) => {
-          shuffledObj[index + 1] = obj[key];
-        });
-
-        setShuffledArtists(shuffledObj);
       } catch (error) {
         console.log("Error fetching artists:", error);
       } finally {
@@ -136,7 +161,14 @@ export default function Artist1() {
     }
 
     fetchArtists(); // Call fetchArtists once on mount
-  }, [setOriginalArtists, setShuffledArtists, timeRange, limit]); // Empty dependency array ensures this runs only once
+  }, [
+    setOriginalArtists,
+    setShuffledArtists,
+    timeRange,
+    limit,
+    router.query,
+    router.isReady,
+  ]); // Empty dependency array ensures this runs only once
 
   if (loading) {
     return (
@@ -215,7 +247,7 @@ export default function Artist1() {
       shuffledArtists,
       clickOrder
     );
-    console.log("HERE IT IS LOGGED RETURNED", correct, incorrect);
+    // console.log("HERE IT IS LOGGED RETURNED", correct, incorrect);
     setCorrect(correct);
     setIncorrect(incorrect);
     setShowResult(true);
@@ -229,28 +261,19 @@ export default function Artist1() {
         {clickPlay ? (
           <>
             <p className=" font-extrabold mb-6 mt-2 text-3xl sm:text-5xl antialiased bg-gradient-to-r from-green-400 via-green-500 to-green-600 bg-clip-text text-transparent p-2 tracking-tight">
-              Guess Your Top {limit}
+              Guess {name}&apos;s Top {limit}
             </p>
 
             <div className="flex flex-row justify-center flex-wrap md:flex-row md:flex-wrap lg:flex-row lg:flex-wrap">
               {Object.entries(shuffledArtists).length === 0 ? (
                 <>
                   <div className="flex flex-col justify-center items-center scroll-m-20 text-2xl font-bold tracking-tight">
-                    {fetchedData.items?.length === 0 ||
-                    fetchedData.items?.length < limit ? (
+                    {fetchedData.length === 0 ? (
                       <>
                         <p>Nothing to display 😿</p>
-                        <p>
-                          You dont have the minimum listening required to
-                          generate your top 5 right now
-                        </p>
-                        <p>
-                          come back later, or give feedback if you think this is
-                          incorrect
-                        </p>
                       </>
                     ) : (
-                      <></>
+                      <>ahem😦 something snapped!</>
                     )}
                   </div>
                 </>
@@ -277,13 +300,11 @@ export default function Artist1() {
             {showResult ? (
               <div className="h-full py-2 px-2 rounded-xl bg-gradient-to-b dark:from-green-800 dark:via-gray-900 dark:to-black from-green-200 via-gray-200 to-zinc-100 bg-[length:200%_200%] animate-gradient-move">
                 <div className="flex flex-col w-80 md:w-full">
-                  <ArtistResult
+                  <ArtistResultFriend
                     correct={correct}
                     incorrect={incorrect}
                     original={originalArtists}
                     limit={limit}
-                    range={timeRange}
-                    name={session?.user.name}
                   />
 
                   <div className="flex justify-center items-center m-2">
@@ -301,7 +322,6 @@ export default function Artist1() {
                           image={artist.image}
                           name={artist.name}
                           isCorrect={artist.isCorrect}
-                          
                         />
                       ))
                     )}
@@ -313,12 +333,7 @@ export default function Artist1() {
             )}
           </>
         ) : (
-          <GuessArtists
-            setClickPlay={setClickPlay}
-            setTimeRange={setTimeRange}
-            setLimit={setLimit}
-            login={login}
-          />
+          <GuessFriendsArtists setClickPlay={setClickPlay} />
         )}
       </div>
     </>
